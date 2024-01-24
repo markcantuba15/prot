@@ -17,33 +17,92 @@ namespace prot
         //CREATE CHECK USER 
         connectionDB con = new connectionDB();
 
-        public bool valid;
+        public bool valid = false;
 
-        public bool checkUser(string uname, string pass) {
 
-            con.dbconnect();
+        public bool checkUser(string uname , string pass) {
 
-            if (con.OpenConnection() == true) {
-                string sql = "SELECT * FROM account WHERE (USERNAME = '" + uname + "' AND PASSWD = '" + pass + "') LIMIT 1";
+            try {
+                con.dbconnect();
+                if (con.OpenConnection()) {
+                    string sql = "SELECT * FROM account WHERE (USERNAME = " + "'" + uname + "' AND PASSWD=" + "'" + pass + "')LIMIT 1";
+                    MySqlDataAdapter da = new MySqlDataAdapter(sql, con.connection);
+                    DataTable dt = new DataTable();
 
-                MySqlDataAdapter da = new MySqlDataAdapter(sql, con.connection);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                    da.Fill(dt);
 
-                if (dt.Rows.Count == 0)
-                {
-                    valid = false;
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        valid = false;
+
+
+                    }
+                    else {
+                        valid = true;
+                    }
                 
                 }
-                else {
-                    valid = true;
-                }
+                return valid;
             
             }
-
-            con.CloseConnection();
-            return valid;
-        
+            catch (MySqlException ex) {
+                MessageBox.Show(ex.Message);
+                return valid;
+            }
         }
+
+
+
+
+        public string generateID() {
+
+            try {
+                con.dbconnect();
+
+                if (con.OpenConnection()) {
+                    string sql = "SELECT MAX(ID) FROM student_info";
+                    MySqlCommand cmd = new MySqlCommand(sql, con.connection);
+                    object result = cmd.ExecuteScalar();
+
+
+                    if (result != null && result != DBNull.Value) {
+
+                        int maxID = Convert.ToInt32(result);
+
+                        return (maxID - 1).ToString("00000");
+                    }
+
+
+                
+                }
+                return "00000";
+            
+            
+            
+            
+            }
+            catch (MySqlException ex) {
+                MessageBox.Show(ex.Message);
+                return "00000";
+            
+            }
+        }
+
+
+
+       
+
+
     }
+
 }
+
+
+
+
+
+
+
+
+

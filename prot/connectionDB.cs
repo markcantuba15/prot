@@ -15,60 +15,57 @@ namespace prot
     class connectionDB
     {
         public MySqlConnection connection;
-        private string server;
-        private string database;
-        private string uid;
-        private string password;
+        string server;
+        string database;
+        string uid;
+        string password;
 
-
-
-    public void dbconnect() {
-
+        public void dbconnect() {
             server = "localhost";
             database = "trymunadb";
             uid = "root";
             password = "";
-
             string connectionString;
-            connectionString = "SERVER=" + server + ";" + "DATABASE = " + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
-
+            connectionString = "SERVER=" + server + ";" + "DATABASE =" + database + ";" + "UID =" + uid + ";" + "PASSWORD=" + password + ";";
             connection = new MySqlConnection(connectionString);
-        
         }
 
         public bool OpenConnection() {
-            try {
+            try
+            {
                 connection.Open();
                 return true;
             }
             catch (MySqlException ex) {
-
                 switch (ex.Number) {
                     case 0:
-                        MessageBox.Show("CANNOT CONNECT TO SERVER");
+                        MessageBox.Show("CANT CONNECT TO SERVER");
                         break;
                     case 1045:
-                        MessageBox.Show("INVALID USERNAME/PASSWORD");
+                        MessageBox.Show("INALID USERNAME AND PASSWORD");
                         break;
-                
+
+
                 }
                 return false;
+            
             }
         
         }
 
-
         public bool CloseConnection() {
-            try {
+
+            try
+            {
                 connection.Close();
                 return true;
+
             }
             catch (MySqlException ex) {
                 MessageBox.Show(ex.Message);
-                return false;
             }
+            return false;
         }
-     
     }
 
 }
