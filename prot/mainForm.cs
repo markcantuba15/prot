@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-
+using System.IO;
 namespace prot
 {
     public partial class mainForm : Form
@@ -21,6 +21,7 @@ namespace prot
         myFunction fc = new myFunction();
         public bool addrec;
         public bool check;
+        public bool editrec;
         private void mainForm_Load(object sender, EventArgs e)
         {
             loadGrid();
@@ -32,21 +33,20 @@ namespace prot
             try {
 
                 opencon.dbconnect();
-
                 if (opencon.OpenConnection()) {
-                    dataGridView1.Refresh();
-                    string sql = "SELECT STUDENTID,FIRSTNAME,MIDDLENAME,LASTNAME,AGE FROM student_info LIMIT 10";
+                    string sql = "SELECT STUDENTID,FIRSTNAME,LASTNAME,MIDDLENAME,AGE,PATH FROM student_info LIMIT 20";
+
                     MySqlCommand cmd = new MySqlCommand(sql, opencon.connection);
                     MySqlDataAdapter da = new MySqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
 
                     da.Fill(dt);
-                    dataGridView1.DataSource = (dt);
+
+                   dataGridView1.DataSource = (dt);
+
                     opencon.CloseConnection();
                 
-                
                 }
-            
             }
 
 
@@ -110,50 +110,153 @@ namespace prot
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (addrec == true) {
-                try
-                {
-                    opencon.dbconnect();
-                    if (opencon.OpenConnection())
-                    {
-                        if (checkID(Convert.ToString(txtId.Text))== false)
-                        {
-                            string sql = "INSERT INTO student_info (STUDENTID , FIRSTNAME,MIDDLENAME,LASTNAME,AGE) VALUES " + "('" + Convert.ToString(txtId.Text) + "' , '" + Convert.ToString(txtFname.Text) + "' , '" + Convert.ToString(txtMname.Text) + "' , '" + Convert.ToString(txtLname.Text) + "' , '" + Convert.ToString(txtAge.Text) + "')";
-                            MySqlCommand cd = new MySqlCommand(sql, opencon.connection); 
-                            cd.ExecuteNonQuery();
 
-                            MessageBox.Show("INSERTEDE NAYS");
+            try
+            {
+                opencon.dbconnect();
+                if (opencon.OpenConnection())
+                {
+                    if (addrec)
+                    {
+                        if (!checkID(Convert.ToString(txtId.Text)))
+                        {
+                            string sql = "INSERT into student_info (STUDENTID,FIRSTNAME,MIDDLENAME,LASTNAME,AGE,PATH) VALUES ( @StudentId,@FirstName,@MiddleName,@LastName,@Age,@path)";
+
+                            using (MySqlCommand cmd = new MySqlCommand(sql, opencon.connection)) {
+
+                                cmd.Parameters.AddWithValue("@StudentId", Convert.ToString(txtId.Text));
+                                cmd.Parameters.AddWithValue("@FirstName", Convert.ToString(txtFname.Text));
+                                cmd.Parameters.AddWithValue("@Middlename", Convert.ToString(txtMname.Text));
+                                cmd.Parameters.AddWithValue("@Lastname", Convert.ToString(txtLname.Text));
+                                cmd.Parameters.AddWithValue("@Age", Convert.ToString(txtAge.Text));
+                                cmd.Parameters.AddWithValue("@path", Convert.ToString(txtpath.Text));
+                                cmd.ExecuteNonQuery();
+                                loadGrid();
+                                MessageBox.Show("SUCCESSFULLY ADDEDD");
+                            }
+
                         }
                         else
                         {
-                            MessageBox.Show("D PUMASOK");
+                            MessageBox.Show("Duplicate id");
+                        }
+                    }
+                    else if (editrec)
+                    {
+                        //   string sql = "UPDATE student_info SET FIRSTNAME = @FirstName, MIDDLENAME = @MiddleName, LASTNAME = @LastName, AGE = @Age WHERE STUDENTID = @StudentId";
+                        string sql = "UPDATE student_info SET FIRSTNAME = @fname,MIDDLENAME = @mname , LASTNAME = @lname , AGE = @age WHERE STUDENTID = @studentId";
+
+                        using (MySqlCommand cmd = new MySqlCommand(sql, opencon.connection)) {
+                            cmd.Parameters.AddWithValue("@studentId", Convert.ToString(txtId.Text));
+                            cmd.Parameters.AddWithValue("@fname", Convert.ToString(txtFname.Text));
+                            cmd.Parameters.AddWithValue("@mname", Convert.ToString(txtMname.Text));
+                            cmd.Parameters.AddWithValue("@lname", Convert.ToString(txtLname.Text));
+                            cmd.Parameters.AddWithValue("@age", Convert.ToString(txtAge.Text));
+
+                            cmd.ExecuteNonQuery();
+                            MessageBox.Show("SUCCESSFULLY updated");
+                            loadGrid();
                         }
                     }
                 }
-
-                catch (MySqlException ex) {
-                    MessageBox.Show(ex.Message);
-                }
-
             }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try {
                 DataGridViewRow row = this.dataGridView1.Rows[e.RowIndex];
+
                 txtId.Text = row.Cells["STUDENTID"].Value.ToString();
                 txtFname.Text = row.Cells["FIRSTNAME"].Value.ToString();
                 txtMname.Text = row.Cells["MIDDLENAME"].Value.ToString();
                 txtLname.Text = row.Cells["LASTNAME"].Value.ToString();
                 txtAge.Text = row.Cells["AGE"].Value.ToString();
+                string path = row.Cells["PATH"].Value.ToString();
 
-            
+                path = path.Replace(" ", "/");
+
+
+                if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+                {
+
+                    using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    {
+
+                        idPicture.Image = Image.FromStream(stream);
+                        txtpath.Text = path;
+
+
+
+                    }
+
+                }
+
+                else {
+
+                    idPicture.Image = null;
+                }
+
+
+
+
             }
             catch (MySqlException ex) {
 
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            editrec = true;
+        }
+        // jpg,jpeg,gif,bmp,png
+
+    
+     
+
+        private void btnUpload_Click(object sender, EventArgs e)
+        {
+
+           
+            
+            OpenFileDialog photo = new  OpenFileDialog();
+
+            photo.InitialDirectory = "C:\\kabisado\\photo";
+            photo.Filter = "Image Files : (.jpg; *.jpeg; *.bmp; *.gif; *.png)|.jpg; *.jpeg; *.bmp; *.gif; *.png";
+
+
+            if (photo.ShowDialog() == DialogResult.OK) {
+
+                try {
+                    string filename = System.IO.Path.GetFileName(photo.FileName);
+                    string location = "C:\\kabisado\\photo";
+                    string fullpath = location + "\\" + filename;
+
+                    idPicture.ImageLocation = fullpath;
+                    fullpath = fullpath.Replace("\\", "\\");
+                    txtpath.Text = fullpath;
+
+
+
+
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message);
+                
+                }
+            
+            }
+
+
+
+
         }
     }
 }

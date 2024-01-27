@@ -43,7 +43,12 @@ namespace prot
             this.txtId = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.btnUpload = new System.Windows.Forms.Button();
+            this.idPicture = new System.Windows.Forms.PictureBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.txtpath = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idPicture)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
@@ -138,6 +143,7 @@ namespace prot
             this.btnEdit.TabIndex = 10;
             this.btnEdit.Text = "EDIT RECORD";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // txtId
             // 
@@ -158,17 +164,50 @@ namespace prot
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(479, 145);
+            this.dataGridView1.Location = new System.Drawing.Point(454, 207);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(283, 150);
             this.dataGridView1.TabIndex = 13;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            // 
+            // btnUpload
+            // 
+            this.btnUpload.Location = new System.Drawing.Point(541, 158);
+            this.btnUpload.Name = "btnUpload";
+            this.btnUpload.Size = new System.Drawing.Size(75, 23);
+            this.btnUpload.TabIndex = 14;
+            this.btnUpload.Text = "Upload";
+            this.btnUpload.UseVisualStyleBackColor = true;
+            this.btnUpload.Click += new System.EventHandler(this.btnUpload_Click);
+            // 
+            // idPicture
+            // 
+            this.idPicture.Location = new System.Drawing.Point(521, 46);
+            this.idPicture.Name = "idPicture";
+            this.idPicture.Size = new System.Drawing.Size(127, 80);
+            this.idPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.idPicture.TabIndex = 15;
+            this.idPicture.TabStop = false;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // txtpath
+            // 
+            this.txtpath.Location = new System.Drawing.Point(367, 387);
+            this.txtpath.Name = "txtpath";
+            this.txtpath.Size = new System.Drawing.Size(100, 20);
+            this.txtpath.TabIndex = 16;
             // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 464);
+            this.Controls.Add(this.txtpath);
+            this.Controls.Add(this.idPicture);
+            this.Controls.Add(this.btnUpload);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtId);
@@ -187,6 +226,7 @@ namespace prot
             this.Text = "mainForm";
             this.Load += new System.EventHandler(this.mainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,5 +248,9 @@ namespace prot
         private System.Windows.Forms.TextBox txtId;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnUpload;
+        private System.Windows.Forms.PictureBox idPicture;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox txtpath;
     }
 }

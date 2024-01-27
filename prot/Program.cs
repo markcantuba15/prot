@@ -19,6 +19,7 @@ namespace prot
             //  Application.Run(new Form1());
             var makin = new Form1();
             makin.Show();
+           
             Application.Run();
         }
     }
